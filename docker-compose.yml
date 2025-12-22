@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "${PORT:-8080}:80"
+    env_file:
+      - .env.local
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20

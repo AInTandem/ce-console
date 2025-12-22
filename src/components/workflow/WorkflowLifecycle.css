@@ -1,0 +1,126 @@
+/**
+ * WorkflowLifecycle Styles
+ */
+
+.workflow-lifecycle {
+  --theme-primary: #1976d2;
+  --theme-secondary: #dc004e;
+  --theme-background: #f5f5f5;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--theme-background);
+  padding: 2rem;
+}
+
+.lifecycle-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.lifecycle-header h1 {
+  font-size: 2.5rem;
+  color: var(--theme-primary);
+  margin-bottom: 0.5rem;
+}
+
+.lifecycle-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.lifecycle-content {
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.phases-container {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.phase-transition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.transition-arrow {
+  font-size: 2rem;
+  color: var(--theme-primary);
+  margin: 0.5rem 0;
+}
+
+.transition-label {
+  font-size: 0.875rem;
+  color: #666;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.feedback-loops {
+  position: relative;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.feedback-arrow {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  background-color: #fff3e0;
+  border: 2px dashed var(--theme-secondary);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--theme-secondary);
+}
+
+.feedback-arrow.feedback-loop::before {
+  content: '↻ ';
+}
+
+.feedback-arrow.feedback-feedback::before {
+  content: '↩ ';
+}
+
+/* Compact mode */
+.workflow-lifecycle.compact {
+  padding: 1rem;
+}
+
+.workflow-lifecycle.compact .lifecycle-header h1 {
+  font-size: 1.75rem;
+}
+
+.workflow-lifecycle.compact .phases-container {
+  gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .workflow-lifecycle {
+    padding: 1rem;
+  }
+
+  .lifecycle-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .phases-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .phase-transition {
+    transform: rotate(90deg);
+    margin: 1rem 0;
+  }
+}
