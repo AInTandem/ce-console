@@ -1,3 +1,0 @@
-/api/* http://localhost:9900/api/:splat
-/flexy/* http://localhost:9900/flexy/:splat
-/code-server/* http://localhost:9900/code-server/:splat
