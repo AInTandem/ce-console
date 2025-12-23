@@ -6,8 +6,6 @@
 .cospec-sync
 .kai-notify.json
 
-.reports/
-
 # Logs
 logs
 *.log
@@ -16,10 +14,15 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+wrangler.toml*
 
+.pnpm-store
 node_modules
 dist
 dist-ssr
+
+.env
+.env.*
 *.local
 
 # Editor directories and files
