@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { buildApiUrl } from '@/lib/config'; // Import the buildApiUrl function
+import { login as authLogin } from '@/lib/api/auth';
 
 export function LoginPage() {
   const [username, setUsername] = useState('');
@@ -31,25 +31,17 @@ export function LoginPage() {
     }
 
     try {
-      // Call the new backend authentication endpoint
-      const response = await fetch(`${buildApiUrl('/api/auth/login')}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      // Call the authentication API
+      const result = await authLogin({ username, password });
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (result.success && result.token) {
         // Store the token in the auth context
-        login(data.token, data.user); // Pass the token and user info to the auth context
+        login(result.token, result.user); // Pass the token and user info to the auth context
 
         // Redirect to the intended page or home
         navigate(from, { replace: true });
       } else {
-        setError(data.error || 'Invalid credentials. Please try again.');
+        setError(result.error || 'Invalid credentials. Please try again.');
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -83,6 +75,7 @@ export function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="username"
               />
             </div>
             <div className="space-y-2">
@@ -95,6 +88,7 @@ export function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
