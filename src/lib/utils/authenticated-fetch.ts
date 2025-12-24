@@ -35,7 +35,7 @@ export const electronApiProxy = async (url: string, options: RequestInit = {}): 
   // console.log('proxyResponse', proxyResponse);
   // Create a response-like object to make it more compatible with fetch API
   const response = new Response(
-    proxyResponse.data,
+    proxyResponse.data || undefined,
     {
       status: proxyResponse.statusCode || 200,
       headers: proxyResponse.headers || {}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,9 +12,15 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDesktopApp, setIsDesktopApp] = useState<boolean | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Check if running in AInTandem Desktop app
+  useEffect(() => {
+    setIsDesktopApp(!!window.__IN_AINTANDEM_DESKTOP__);
+  }, []);
 
   // Get the redirect path from state or default to home
   const from = location.state?.from?.pathname || '/';
@@ -51,6 +57,50 @@ export function LoginPage() {
     }
   };
 
+  // Show different UI based on environment
+  if (isDesktopApp === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">AInTandem Desktop Required</CardTitle>
+            <CardDescription>This application requires the AInTandem Desktop app</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p className="mb-4">
+              This application is designed to run in the AInTandem Desktop environment.
+              Please download and use the desktop app for full functionality.
+            </p>
+            <a
+              href="https://www.aintandem.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button>Visit AInTandem Website</Button>
+            </a>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show loading state while checking environment
+  if (isDesktopApp === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Loading...</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p>Checking environment...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Original login form for desktop app
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <Card className="w-full max-w-md">
