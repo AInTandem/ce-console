@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getClient } from '@/lib/api/api-helpers';
+import { getClient, listSandboxImages } from '@/lib/api/api-helpers';
 import type {
   Sandbox,
   Organization,
   Workspace,
-  Project
+  Project,
+  SandboxImagesListResponse
 } from '@/lib/types';
 
 // Query keys for sandbox data
@@ -41,6 +42,13 @@ const PROJECT_KEYS = {
   list: () => [...PROJECT_KEYS.lists()] as const,
   details: () => [...PROJECT_KEYS.all, 'detail'] as const,
   detail: (id: string) => [...PROJECT_KEYS.details(), id] as const,
+};
+
+// Query keys for sandbox images
+const SANDBOX_IMAGE_KEYS = {
+  all: ['sandbox-images'] as const,
+  lists: () => [...SANDBOX_IMAGE_KEYS.all, 'list'] as const,
+  list: () => [...SANDBOX_IMAGE_KEYS.lists()] as const,
 };
 
 // Sandbox Queries
@@ -137,6 +145,17 @@ export const useProjectQuery = (id: string) => {
   });
 };
 
+// Sandbox Images Queries
+export const useSandboxImagesQuery = () => {
+  return useQuery<SandboxImagesListResponse>({
+    queryKey: SANDBOX_IMAGE_KEYS.list(),
+    queryFn: async () => {
+      return listSandboxImages() as any;
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+};
+
 // Combined Queries
 export const useAllSandboxDataQuery = () => {
   return useQuery<{
@@ -220,12 +239,13 @@ export const useDeleteSandboxMutation = () => {
 export const useCreateSandboxMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ name, folderMapping, projectId }: { name?: string; folderMapping?: string; projectId?: string }) => {
+    mutationFn: async ({ name, folderMapping, projectId, imageName }: { name?: string; folderMapping?: string; projectId?: string; imageName?: string }) => {
       const client = getClient();
       return client.sandboxes.createSandbox({
         name: name || '',
         folderMapping,
-        projectId
+        projectId,
+        imageName
       } as any) as any;
     },
     onSuccess: () => {

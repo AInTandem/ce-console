@@ -193,3 +193,25 @@ export async function importWorkflowJson(
     definition: workflow.definition || workflow,
   }) as any;
 }
+
+// ============================================================================
+// Sandbox Images APIs (not in SDK yet)
+// Note: SDK does not provide listSandboxImages method yet
+// ============================================================================
+
+export async function listSandboxImages(): Promise<{
+  images: Array<{
+    id: string;
+    name: string;
+    tags?: string[];
+    icon?: string;
+    isDefault?: boolean;
+    platform?: string;
+  }>;
+  total: number;
+  defaultImageId: string;
+}> {
+  const client = getClient();
+  const httpClient = client.getHttpClient();
+  return httpClient.get('/flexy/images') as any;
+}

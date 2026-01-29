@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@aintandem/sdk-core':
-        specifier: ^0.5.1
-        version: 0.5.1
+        specifier: ^0.6.0-alpha
+        version: 0.6.0-alpha
       '@aintandem/sdk-react':
-        specifier: ^0.5.1
-        version: 0.5.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^0.6.0-alpha
+        version: 0.6.0-alpha(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -180,12 +180,12 @@ importers:
 
 packages:
 
-  '@aintandem/sdk-core@0.5.1':
-    resolution: {integrity: sha512-DrFELz/fxL7ORbzrtkSTQWSQGrCM4SiwPeY0l1vHRGlfRlzyiCMsvGwIgsD90QUkxC4OGSZpSj8qgDLeuYE2Jw==}
+  '@aintandem/sdk-core@0.6.0-alpha':
+    resolution: {integrity: sha512-TGAYRG6gVSYkkW2KZP1MDR9foAELIFpm06TBXBldceTwqay7j812S9Of/IWQVMEQjJGbs44q7AMPUYZiKQYzKA==}
     engines: {node: '>=18.0.0'}
 
-  '@aintandem/sdk-react@0.5.2':
-    resolution: {integrity: sha512-cE8xNfEgtweiF2EMlmdWYz0xJ24AZckyp0jTIBG22jh5FFf55irSfmi09oml4syxPBwW1GuEShcZY+HdI9+c/Q==}
+  '@aintandem/sdk-react@0.6.0-alpha':
+    resolution: {integrity: sha512-UOowXV7HVL4l59TQPv/V6axqKzxne6uqXUkIaAURhG3iz5cC5dOWxEuItZK+FeduR4QZid1OWWM/Lr3UQ4Wlug==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -3628,11 +3628,11 @@ packages:
 
 snapshots:
 
-  '@aintandem/sdk-core@0.5.1': {}
+  '@aintandem/sdk-core@0.6.0-alpha': {}
 
-  '@aintandem/sdk-react@0.5.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@aintandem/sdk-react@0.6.0-alpha(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@aintandem/sdk-core': 0.5.1
+      '@aintandem/sdk-core': 0.6.0-alpha
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
