@@ -11,13 +11,15 @@ import {
   useCreateOrganizationMutation,
   useCreateWorkspaceMutation,
   useCreateProjectMutation,
-  useCreateSandboxMutation,
   useDeleteOrganizationMutation,
   useDeleteWorkspaceMutation,
   useDeleteProjectMutation,
-  SANDBOX_KEYS,
-  PROJECT_KEYS,
 } from '@/services/query-hooks';
+import {
+  useCreateSandboxMutation as useCreateSandboxMutationWithImage,
+  SANDBOX_KEYS,
+} from '@/services/sandbox-query-hooks';
+import { PROJECT_KEYS } from '@/services/query-hooks';
 
 interface ExtendedProject extends Project {
   organizationId?: string;
@@ -69,9 +71,9 @@ interface AIBaseActions {
   handleCreateOrganization: (name: string, folderPath: string) => Promise<void>;
   handleCreateWorkspace: (organizationId: string, name: string, folderPath: string) => Promise<void>;
   handleCreateProject: (workspaceId: string, name: string, folderPath: string, workflowId?: string) => Promise<void>;
-  handleCreateSandbox: (projectId: string) => Promise<void>;
+  handleCreateSandbox: (projectId: string, aiConfig?: any, imageName?: string) => Promise<void>;
   handleDestroySandbox: (sandboxId: string) => Promise<void>;
-  handleRecreateSandbox: (projectId: string, sandboxId: string) => Promise<void>;
+  handleRecreateSandbox: (projectId: string, sandboxId: string, aiConfig?: any, imageName?: string) => Promise<void>;
   handleDeleteOrganization: (orgId: string) => Promise<void>;
   handleDeleteWorkspace: (workspaceId: string) => Promise<void>;
   handleDeleteProject: (projectId: string, deleteFolder?: boolean) => Promise<void>;
@@ -139,7 +141,7 @@ export function useAIBaseQueryState(_props: AIBaseHookProps = {}): [AIBaseState,
   const createOrganizationMutation = useCreateOrganizationMutation();
   const createWorkspaceMutation = useCreateWorkspaceMutation();
   const createProjectMutation = useCreateProjectMutation();
-  const createSandboxMutation = useCreateSandboxMutation();
+  const createSandboxMutation = useCreateSandboxMutationWithImage();
   const deleteOrganizationMutation = useDeleteOrganizationMutation();
   const deleteWorkspaceMutation = useDeleteWorkspaceMutation();
   const deleteProjectMutation = useDeleteProjectMutation(selectedWorkspace || undefined);
@@ -217,14 +219,15 @@ export function useAIBaseQueryState(_props: AIBaseHookProps = {}): [AIBaseState,
     }
   }, [createProjectMutation]);
 
-  const handleCreateSandbox = useCallback(async (projectId: string) => {
+  const handleCreateSandbox = useCallback(async (projectId: string, _aiConfig?: any, imageName?: string) => {
     try {
       // Get the project first to access its workspaceId
       const project = projects.find(p => p.id === projectId);
-      await createSandboxMutation.mutateAsync({ 
-        projectId, 
-        folderMapping: undefined, 
-        name: undefined 
+      await createSandboxMutation.mutateAsync({
+        projectId,
+        folderMapping: undefined,
+        name: undefined,
+        imageName
       });
       // Also invalidate the all-sandbox-data query for consistency
       await queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
