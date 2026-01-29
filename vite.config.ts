@@ -19,43 +19,19 @@ export default defineConfig({
     rollupOptions: {
       external: [],
       output: {
+        // Safer chunk splitting - only split very large non-React dependencies
+        // Use a function-based approach for better granularity
         manualChunks: (id) => {
-          // React core
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor';
-          }
-          // TanStack Query
-          if (id.includes('node_modules/@tanstack/react-query')) {
-            return 'query-vendor';
-          }
-          // Router
-          if (id.includes('node_modules/react-router-dom')) {
-            return 'router-vendor';
-          }
-          // ReactFlow (workflow editor - large)
-          if (id.includes('node_modules/reactflow') || id.includes('node_modules/react-dnd')) {
-            return 'workflow-vendor';
-          }
-          // Radix UI components
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'radix-vendor';
-          }
-          // State management
-          if (id.includes('node_modules/zustand')) {
-            return 'state-vendor';
-          }
-          // Icons
-          if (id.includes('node_modules/lucide-react')) {
-            return 'icons-vendor';
-          }
-          // SDK
+          // Split out the SDK (external dependency)
           if (id.includes('node_modules/@aintandem/sdk')) {
-            return 'sdk-vendor';
+            return 'sdk';
           }
-          // Other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
+          // Split out lucide-react (large icon library, safe to split)
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons';
           }
+          // Everything else goes into vendor chunks - let Vite handle the rest
+          // This avoids circular dependency issues between React ecosystem packages
         }
       }
     }
