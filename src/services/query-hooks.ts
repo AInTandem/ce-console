@@ -4,7 +4,6 @@ import type {
   Organization,
   Workspace,
   Project,
-  Sandbox,
   Workflow
 } from '@/lib/types';
 
@@ -35,15 +34,6 @@ const PROJECT_KEYS = {
   detail: (id: string) => [...PROJECT_KEYS.details(), id] as const,
 };
 
-// Query keys for sandbox data
-const SANDBOX_KEYS = {
-  all: ['sandboxes'] as const,
-  lists: () => [...SANDBOX_KEYS.all, 'list'] as const,
-  list: () => [...SANDBOX_KEYS.lists()] as const,
-  details: () => [...SANDBOX_KEYS.all, 'detail'] as const,
-  detail: (id: string) => [...SANDBOX_KEYS.details(), id] as const,
-};
-
 // Query keys for workflow data
 const WORKFLOW_KEYS = {
   all: ['workflows'] as const,
@@ -58,7 +48,6 @@ export {
   ORGANIZATION_KEYS,
   WORKSPACE_KEYS,
   PROJECT_KEYS,
-  SANDBOX_KEYS,
   WORKFLOW_KEYS,
 };
 
@@ -133,29 +122,6 @@ export const useProjectQuery = (id: string) => {
       return client.workspaces.getProject(id) as any;
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
-// Sandbox Queries
-export const useSandboxesQuery = () => {
-  return useQuery<Sandbox[]>({
-    queryKey: SANDBOX_KEYS.list(),
-    queryFn: async () => {
-      const client = getClient();
-      return client.sandboxes.listSandboxes() as any;
-    },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-  });
-};
-
-export const useSandboxQuery = (id: string) => {
-  return useQuery<Sandbox>({
-    queryKey: SANDBOX_KEYS.detail(id),
-    queryFn: async () => {
-      const client = getClient();
-      return client.sandboxes.getSandbox(id) as any;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
@@ -302,72 +268,6 @@ export const useDeleteProjectMutation = (workspaceId?: string) => {
       if (workspaceId) {
         queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.list(workspaceId) });
       }
-    },
-  });
-};
-
-export const useCreateSandboxMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ name, folderMapping, projectId }: { name?: string; folderMapping?: string; projectId?: string }) => {
-      const client = getClient();
-      return client.sandboxes.createSandbox({
-        name: name || '',
-        folderMapping,
-        projectId
-      } as any) as any;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
-      queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
-      // Invalidate projects query to refresh project with new sandbox info
-      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
-    },
-  });
-};
-
-export const useStartSandboxMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const client = getClient();
-      await client.sandboxes.startSandbox(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
-      queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
-    },
-  });
-};
-
-export const useStopSandboxMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const client = getClient();
-      await client.sandboxes.stopSandbox(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
-      queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
-      // Invalidate projects query to refresh project with updated sandbox status
-      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
-    },
-  });
-};
-
-export const useDeleteSandboxMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const client = getClient();
-      await client.sandboxes.deleteSandbox(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
-      queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
-      // Invalidate projects query to refresh project with removed sandbox info
-      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
     },
   });
 };

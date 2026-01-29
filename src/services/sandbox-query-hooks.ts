@@ -17,33 +17,6 @@ const SANDBOX_KEYS = {
   detail: (id: string) => [...SANDBOX_KEYS.details(), id] as const,
 };
 
-// Query keys for organization data
-const ORGANIZATION_KEYS = {
-  all: ['organizations'] as const,
-  lists: () => [...ORGANIZATION_KEYS.all, 'list'] as const,
-  list: () => [...ORGANIZATION_KEYS.lists()] as const,
-  details: () => [...ORGANIZATION_KEYS.all, 'detail'] as const,
-  detail: (id: string) => [...ORGANIZATION_KEYS.details(), id] as const,
-};
-
-// Query keys for workspace data
-const WORKSPACE_KEYS = {
-  all: ['workspaces'] as const,
-  lists: () => [...WORKSPACE_KEYS.all, 'list'] as const,
-  list: () => [...WORKSPACE_KEYS.lists()] as const,
-  details: () => [...WORKSPACE_KEYS.all, 'detail'] as const,
-  detail: (id: string) => [...WORKSPACE_KEYS.details(), id] as const,
-};
-
-// Query keys for project data
-const PROJECT_KEYS = {
-  all: ['projects'] as const,
-  lists: () => [...PROJECT_KEYS.all, 'list'] as const,
-  list: () => [...PROJECT_KEYS.lists()] as const,
-  details: () => [...PROJECT_KEYS.all, 'detail'] as const,
-  detail: (id: string) => [...PROJECT_KEYS.details(), id] as const,
-};
-
 // Query keys for sandbox images
 const SANDBOX_IMAGE_KEYS = {
   all: ['sandbox-images'] as const,
@@ -51,7 +24,20 @@ const SANDBOX_IMAGE_KEYS = {
   list: () => [...SANDBOX_IMAGE_KEYS.lists()] as const,
 };
 
+// Query keys for project data (local copy for invalidation)
+const PROJECT_KEYS = {
+  all: ['projects'] as const,
+  lists: () => [...PROJECT_KEYS.all, 'list'] as const,
+  list: (wsId: string) => [...PROJECT_KEYS.lists(), wsId] as const,
+};
+
+// Export SANDBOX_KEYS for use in other files
+export { SANDBOX_KEYS };
+
+// ============================================================================
 // Sandbox Queries
+// ============================================================================
+
 export const useSandboxesQuery = () => {
   return useQuery<Sandbox[]>({
     queryKey: SANDBOX_KEYS.list(),
@@ -74,78 +60,10 @@ export const useSandboxQuery = (id: string) => {
   });
 };
 
-// Organization Queries
-export const useOrganizationsQuery = () => {
-  return useQuery<Organization[]>({
-    queryKey: ORGANIZATION_KEYS.list(),
-    queryFn: async () => {
-      const client = getClient();
-      return client.workspaces.listOrganizations() as any;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
-
-export const useOrganizationQuery = (id: string) => {
-  return useQuery<Organization>({
-    queryKey: ORGANIZATION_KEYS.detail(id),
-    queryFn: async () => {
-      const client = getClient();
-      return client.workspaces.getOrganization(id) as any;
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
-// Workspace Queries
-export const useWorkspacesQuery = (organizationId: string) => {
-  return useQuery<Workspace[]>({
-    queryKey: WORKSPACE_KEYS.list(),
-    queryFn: async () => {
-      const client = getClient();
-      return client.workspaces.listWorkspaces(organizationId) as any;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: !!organizationId,
-  });
-};
-
-export const useWorkspaceQuery = (id: string) => {
-  return useQuery<Workspace>({
-    queryKey: WORKSPACE_KEYS.detail(id),
-    queryFn: async () => {
-      const client = getClient();
-      return client.workspaces.getWorkspace(id) as any;
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
-// Project Queries
-export const useProjectsQuery = (workspaceId: string) => {
-  return useQuery<Project[]>({
-    queryKey: PROJECT_KEYS.list(),
-    queryFn: async () => {
-      const client = getClient();
-      return client.workspaces.listProjects(workspaceId) as any;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: !!workspaceId,
-  });
-};
-
-export const useProjectQuery = (id: string) => {
-  return useQuery<Project>({
-    queryKey: PROJECT_KEYS.detail(id),
-    queryFn: async () => {
-      const client = getClient();
-      return client.workspaces.getProject(id) as any;
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
+// ============================================================================
 // Sandbox Images Queries
+// ============================================================================
+
 export const useSandboxImagesQuery = () => {
   return useQuery<SandboxImagesListResponse>({
     queryKey: SANDBOX_IMAGE_KEYS.list(),
@@ -156,7 +74,10 @@ export const useSandboxImagesQuery = () => {
   });
 };
 
+// ============================================================================
 // Combined Queries
+// ============================================================================
+
 export const useAllSandboxDataQuery = () => {
   return useQuery<{
     sandboxes: Sandbox[];
@@ -193,7 +114,10 @@ export const useAllSandboxDataQuery = () => {
   });
 };
 
-// Mutations
+// ============================================================================
+// Sandbox Mutations
+// ============================================================================
+
 export const useStartSandboxMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -204,6 +128,8 @@ export const useStartSandboxMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
       queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
+      // Invalidate projects query to refresh project with updated sandbox status
+      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
     },
   });
 };
@@ -218,6 +144,8 @@ export const useStopSandboxMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
       queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
+      // Invalidate projects query to refresh project with updated sandbox status
+      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
     },
   });
 };
@@ -232,6 +160,8 @@ export const useDeleteSandboxMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
       queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
+      // Invalidate projects query to refresh project with removed sandbox info
+      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
     },
   });
 };
@@ -251,6 +181,8 @@ export const useCreateSandboxMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: SANDBOX_KEYS.list() });
       queryClient.invalidateQueries({ queryKey: ['all-sandbox-data'] });
+      // Invalidate projects query to refresh project with new sandbox info
+      queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.lists() });
     },
   });
 };
