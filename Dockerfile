@@ -26,7 +26,7 @@ RUN printf 'server {\n\
   \n\
   # Proxy API requests to backend\n\
   location /api/ {\n\
-    proxy_pass http://kai-backend:9900;\n\
+    proxy_pass http://aintandem-orchestrator:9900;\n\
     proxy_http_version 1.1;\n\
     proxy_set_header Upgrade $http_upgrade;\n\
     proxy_set_header Connection "upgrade";\n\
@@ -38,7 +38,7 @@ RUN printf 'server {\n\
   \n\
   # Proxy Flexy sandbox requests to backend\n\
   location /flexy/ {\n\
-    proxy_pass http://kai-backend:9900;\n\
+    proxy_pass http://aintandem-orchestrator:9900;\n\
     proxy_http_version 1.1;\n\
     proxy_set_header Upgrade $http_upgrade;\n\
     proxy_set_header Connection "upgrade";\n\
@@ -50,7 +50,7 @@ RUN printf 'server {\n\
   \n\
   # Proxy code-server requests to backend\n\
   location /code-server/ {\n\
-    proxy_pass http://kai-backend:9900;\n\
+    proxy_pass http://aintandem-orchestrator:9900;\n\
     proxy_http_version 1.1;\n\
     proxy_set_header Upgrade $http_upgrade;\n\
     proxy_set_header Connection "upgrade";\n\
