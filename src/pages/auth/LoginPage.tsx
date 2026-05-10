@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAInTandem } from '@aintandem/sdk-react';
-import { getApiBaseUrl } from '@/lib/config';
+import { getApiBaseUrl, buildApiUrl } from '@/lib/config';
 
 export function LoginPage() {
   const [username, setUsername] = useState('');
@@ -26,17 +26,35 @@ export function LoginPage() {
 
   // Check if running in AInTandem Desktop app and if API is localhost
   useEffect(() => {
-    const inDesktopApp = !!window.__IN_AINTANDEM_DESKTOP__;
-    setIsDesktopApp(inDesktopApp);
+    const checkEnvironment = async () => {
+      const inDesktopApp = !!window.__IN_AINTANDEM_DESKTOP__;
+      setIsDesktopApp(inDesktopApp);
 
-    const apiBaseUrl = getApiBaseUrl();
-    // Check if API URL is localhost (empty means proxy mode, which is also localhost in dev)
-    const isLocal = !apiBaseUrl ||
-                    apiBaseUrl.includes('localhost') ||
-                    apiBaseUrl.includes('127.0.0.1') ||
-                    apiBaseUrl.includes('[::1]');
-    setIsLocalhost(isLocal);
-  }, []);
+      const apiBaseUrl = getApiBaseUrl();
+      // Check if API URL is localhost (empty means proxy mode, which is also localhost in dev)
+      const isLocal = !apiBaseUrl ||
+                      apiBaseUrl.includes('localhost') ||
+                      apiBaseUrl.includes('127.0.0.1') ||
+                      apiBaseUrl.includes('[::1]');
+      setIsLocalhost(isLocal);
+
+      // Check onboarding status
+      try {
+        const response = await fetch(buildApiUrl('/api/onboarding/status'));
+        if (response.ok) {
+          const status = await response.json();
+          if (!status.completed) {
+            navigate('/onboarding', { replace: true });
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check onboarding status:', err);
+      }
+    };
+
+    checkEnvironment();
+  }, [navigate]);
 
   // If already authenticated, redirect to target page
   useEffect(() => {
