@@ -5,7 +5,7 @@
  * TODO: Remove this file and use SDK directly when SDK supports these features.
  */
 
-import { buildApiUrl } from '@/lib/config';
+import { buildApiUrl, getApiBaseUrl } from '@/lib/config';
 import { electronApiProxy } from '@/lib/utils/desktop';
 
 /**
@@ -69,7 +69,7 @@ let clientInstance: AInTandemClient | null = null;
  */
 export function getClient(): AInTandemClient {
   if (!clientInstance) {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+    const API_BASE_URL = getApiBaseUrl();
     const config: AInTandemClientConfig = {
       baseURL: API_BASE_URL || window.location.origin,
     };

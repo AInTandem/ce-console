@@ -14,9 +14,10 @@ import { Toaster } from '@/components/ui/sonner';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { PrivateRoute } from '@/components/auth/PrivateRoute';
 import { AInTandemProvider } from '@aintandem/sdk-react';
+import { getApiBaseUrl } from '@/lib/config';
 
-// Build API URL from environment
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// Get API URL from runtime config (entrypoint.sh) or build-time env
+const API_BASE_URL = getApiBaseUrl();
 
 function App() {
   return (
