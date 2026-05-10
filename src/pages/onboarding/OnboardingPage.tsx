@@ -13,9 +13,7 @@ import { Step2 } from '@/components/onboarding/Step2';
 import { Step3 } from '@/components/onboarding/Step3';
 import { StepSummary } from '@/components/onboarding/StepSummary';
 
-interface OnboardingPageProps {}
-
-export function OnboardingPage({}: OnboardingPageProps) {
+export function OnboardingPage() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.CREATE_ADMIN);
   const [isLoading, setIsLoading] = useState(true);
@@ -128,89 +126,89 @@ export function OnboardingPage({}: OnboardingPageProps) {
   const handleBack = () => {
     // Allow going back to previous step
     switch (currentStep) {
-      case OnboardingStep.GENERATE_JWT:
-        setCurrentStep(OnboardingStep.CREATE_ADMIN);
-        break;
-      case OnboardingStep.SET_SYSTEM_NAME:
-        setCurrentStep(OnboardingStep.GENERATE_JWT);
-        break;
-      case OnboardingStep.CONFIRM:
-        setCurrentStep(OnboardingStep.SET_SYSTEM_NAME);
-        break;
-      default:
-        break;
+    case OnboardingStep.GENERATE_JWT:
+      setCurrentStep(OnboardingStep.CREATE_ADMIN);
+      break;
+    case OnboardingStep.SET_SYSTEM_NAME:
+      setCurrentStep(OnboardingStep.GENERATE_JWT);
+      break;
+    case OnboardingStep.CONFIRM:
+      setCurrentStep(OnboardingStep.SET_SYSTEM_NAME);
+      break;
+    default:
+      break;
     }
   };
 
   const renderStep = () => {
     switch (currentStep) {
-      case OnboardingStep.CREATE_ADMIN:
-        return (
-          <Step1
-            onSubmit={handleStep1Submit}
-            isLoading={isLoading}
-            error={error || undefined}
-          />
-        );
-      case OnboardingStep.GENERATE_JWT:
-        return (
-          <Step2
-            onConfirm={handleStep2Submit}
-            isLoading={isLoading}
-            error={error || undefined}
-          />
-        );
-      case OnboardingStep.SET_SYSTEM_NAME:
-        return (
-          <Step3
-            onSubmit={handleStep3Submit}
-            onBack={handleBack}
-            isLoading={isLoading}
-            error={error || undefined}
-          />
-        );
-      case OnboardingStep.CONFIRM:
-        return (
-          <StepSummary
-            adminUsername={formData.username}
-            systemName={formData.systemName}
-            onConfirm={handleConfirm}
-            isLoading={isLoading}
-            error={error || undefined}
-          />
-        );
-      default:
-        return null;
+    case OnboardingStep.CREATE_ADMIN:
+      return (
+        <Step1
+          onSubmit={handleStep1Submit}
+          isLoading={isLoading}
+          error={error || undefined}
+        />
+      );
+    case OnboardingStep.GENERATE_JWT:
+      return (
+        <Step2
+          onConfirm={handleStep2Submit}
+          isLoading={isLoading}
+          error={error || undefined}
+        />
+      );
+    case OnboardingStep.SET_SYSTEM_NAME:
+      return (
+        <Step3
+          onSubmit={handleStep3Submit}
+          onBack={handleBack}
+          isLoading={isLoading}
+          error={error || undefined}
+        />
+      );
+    case OnboardingStep.CONFIRM:
+      return (
+        <StepSummary
+          adminUsername={formData.username}
+          systemName={formData.systemName}
+          onConfirm={handleConfirm}
+          isLoading={isLoading}
+          error={error || undefined}
+        />
+      );
+    default:
+      return null;
     }
   };
 
   const getStepLabel = (step: OnboardingStep): string => {
     switch (step) {
-      case OnboardingStep.CREATE_ADMIN:
-        return 'Admin Account';
-      case OnboardingStep.GENERATE_JWT:
-        return 'Security';
-      case OnboardingStep.SET_SYSTEM_NAME:
-        return 'System Name';
-      case OnboardingStep.CONFIRM:
-        return 'Review';
-      default:
-        return '';
+    case OnboardingStep.CREATE_ADMIN:
+      return 'Admin Account';
+    case OnboardingStep.GENERATE_JWT:
+      return 'Security';
+    case OnboardingStep.SET_SYSTEM_NAME:
+      return 'System Name';
+    case OnboardingStep.CONFIRM:
+      return 'Review';
+    default:
+      return '';
     }
   };
 
   const getStepNumber = (step: OnboardingStep): number => {
     switch (step) {
-      case OnboardingStep.CREATE_ADMIN:
-        return 1;
-      case OnboardingStep.GENERATE_JWT:
-        return 2;
-      case OnboardingStep.SET_SYSTEM_NAME:
-        return 3;
-      case OnboardingStep.CONFIRM:
-        return 4;
-      default:
-        return 0;
+    case OnboardingStep.CREATE_ADMIN:
+      return 1;
+    case OnboardingStep.GENERATE_JWT:
+      return 2;
+    case OnboardingStep.SET_SYSTEM_NAME:
+      return 3;
+    case OnboardingStep.CONFIRM:
+      return 4;
+    default:
+      return 0;
     }
   };
 
@@ -239,8 +237,8 @@ export function OnboardingPage({}: OnboardingPageProps) {
                     getStepNumber(currentStep) > index
                       ? 'bg-primary text-primary-foreground'
                       : getStepNumber(currentStep) === index + 1
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {getStepNumber(currentStep) > index + 1 ? '✓' : index + 1}

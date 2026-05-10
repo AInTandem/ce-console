@@ -7,11 +7,12 @@ import { Settings } from 'lucide-react';
 
 interface Step3Props {
   onSubmit: (systemName: string) => void;
+  onBack?: () => void;
   isLoading?: boolean;
   error?: string;
 }
 
-export function Step3({ onSubmit, isLoading = false, error }: Step3Props) {
+export function Step3({ onSubmit, onBack, isLoading = false, error }: Step3Props) {
   const [systemName, setSystemName] = useState('AInTandem');
   const [validationError, setValidationError] = useState('');
 
@@ -80,9 +81,16 @@ export function Step3({ onSubmit, isLoading = false, error }: Step3Props) {
             </div>
           )}
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? '處理中...' : '繼續'}
-          </Button>
+          <div className="flex gap-3">
+            {onBack && (
+              <Button type="button" variant="outline" onClick={onBack} disabled={isLoading}>
+                返回
+              </Button>
+            )}
+            <Button type="submit" className="flex-1" disabled={isLoading}>
+              {isLoading ? '處理中...' : '繼續'}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
